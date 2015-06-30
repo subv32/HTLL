@@ -1,6 +1,6 @@
 #!/usr/bin/env python                                               
 #This script posts to the shoutbox
-# ./post.py username password room(if you dont know what this is then use 1) message
+# python post.py username password room(if you dont know what this is then use 1) message
 import re                                                           
 import sys                                                          
 import json                                                         
