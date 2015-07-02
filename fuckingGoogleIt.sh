@@ -26,8 +26,13 @@ do
                         if [[ "$lastAsshole" == "$googleIt" ]]; then
                                 continue
                         fi
-                
+                        #Remove text "how to" or "how do"
+                        googleIt=$(echo -e "$googleIt" | sed s/'how to'// | sed s/'how do'//)
+                        
+                        #Replace spaces with pluses so it will make a valid google search link
                         googleStuff=$(echo -e "$googleIt" | tr " " "+")
+                        
+                        #Make search link
                         googleStuff="https://www.google.com/?gws_rd=ssl#q=$googleStuff"
                         python post.py subv32 password 1 "$googleStuff"
                         lastAsshole=$googleIt
