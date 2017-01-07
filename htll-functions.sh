@@ -113,7 +113,7 @@ getXfToken() {
 		xfToken=$(echo -e "$xfToken" | cut -d'"' -f2)
 		echo -e "$xfToken" > $xfTokenCache
 	else
-		xfToken=$(cat xfTokenCache)
+		xfToken=$(cat $xfTokenCache)
 	fi
 }
 
