@@ -45,7 +45,7 @@ class Application(tk.Frame):
 	def print_contents(self, event):
 		print(self.userinput.get())
 
-		command="bash htll-login.sh --function postToChat --message \"" + str(self.userinput.get()) + "\""
+		command="bash  htll-functions.sh --function postToChat --message \"" + str(self.userinput.get()) + "\""
 		print(command)
 		os.system(command)
 		self.shoutinput.delete('0','end')
@@ -119,7 +119,7 @@ class Application(tk.Frame):
 		self.after(2000, self.printBox)
 	def getCurrentBox(self, getparam):
 		self.currentBox= tk.StringVar()
-		self.currentBox.set(os.popen("bash htll-login.sh --function getShoutyUsingApi --get " + str(getparam)).read())
+		self.currentBox.set(os.popen("bash htll-functions.sh --function getShoutyUsingApi --get " + str(getparam)).read())
 		return self.currentBox.get()
 
 root = tk.Tk()
