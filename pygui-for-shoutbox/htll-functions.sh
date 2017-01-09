@@ -32,7 +32,7 @@ password=''
 #giphyApiKey is only necessary for randomGif() and pullShoutBoxContinously()
 giphyApiKey=''
 
-#htllApiKey is necessary for getShoutyUsingApi() and pullShoutBoxContinously(). 
+#htllApiKey is necessary for getShoutyUsingApi(), postToChatApi(), pullShoutBoxContinously(). 
 #getShouty() could be used instead of getShoutyUsingApi() with minor editing to pullShoutBoxContinously()
 htllApiKey=''
 
@@ -54,6 +54,8 @@ setVariables() {
 	giphyApiSearchEndPoint="http://api.giphy.com/v1/gifs/search"
 	shoutyUrl="https://hightechlowlife.eu/board/chat/"
 	htllApiEndPoint="https://hightechlowlife.eu/board/aigle/api/?token=$htllApiKey"
+	htllApiEndPointPost="https://hightechlowlife.eu/board/aigle/api/"
+
 
 }
 
@@ -78,6 +80,7 @@ randomGif() {
 }
 
 checkIfCookieExists() {
+#Not needed if the API is used
 	if [ ! -f $cookieFile ]; then
 		htllLogin
 	fi
@@ -98,7 +101,7 @@ htllLogin() {
 }
 
 getXfToken() {
-
+#Outdated by postToChatApi
 #Get the xFToken from cache or set it initially
 	if [ ! -f $xfTokenCache ]; then
 		checkIfCookieExists
@@ -115,9 +118,11 @@ getXfToken() {
 	else
 		xfToken=$(cat $xfTokenCache)
 	fi
+	echo $xfToken
 }
 
 postToChat() {
+#Outdated by postToChatApi
 #Will post the first paramter given to this function to the shoutbox
 	getXfToken
 
@@ -129,6 +134,17 @@ postToChat() {
 	chatPostEndPoint="https://hightechlowlife.eu/board/index.php?chat/submit"
 	postData="message=$toPost&room_id=$room&_xfToken=$xfToken"
 	curl -s -b $cookieFile -X POST -d "$postData" $chatPostEndPoint
+
+}
+
+postToChatApi() {
+#Posts the first argument past to this function or chatMessage if not null
+
+if [ -n "$chatMessage" ]; then
+	curl -s -d "token=$htllApiKey&msg=\"$chatMessage\"" $htllApiEndPointPost
+else
+	curl -s -d "token=$htllApiKey&msg=$1" $htllApiEndPointPost
+fi
 
 }
 
@@ -222,7 +238,8 @@ getShoutyUsingApi() {
 }
 
 pullShoutBoxContinously() {
-	checkIfCookieExists
+#Turn this on if no api
+#	checkIfCookieExists
 
 	while :; do
 
@@ -249,7 +266,8 @@ pullShoutBoxContinously() {
 							gifURL=$(randomGif $searchFriendly)
 							gifURL=$(echo -e "$gifURL" | tr -d '"')
 							echo "GIPHY: $gifURL" 
-							postToChat "GIPHY: $searchFriendly - $gifURL"
+							#postToChat is a drop in replacement if no API access
+							postToChatApi "GIPHY: $searchFriendly - $gifURL"
 						fi
 					fi
 				done
@@ -342,7 +360,7 @@ setVariables
 	done
 
 	if [ -n "$chatMessage" ]; then
-		toPost=$chatMessage
+		toPost="$chatMessage"
 	fi
 
 	if [ -n "$getReturnValue" ]; then
